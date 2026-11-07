@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "keypad-phone-backup"
+version = "0.1.0"
+description = "Back up contacts and SMS from old keypad (feature) phones over USB using AT commands"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+dependencies = ["pyserial>=3.5"]
+keywords = ["feature phone", "keypad phone", "backup", "contacts", "sms", "at commands", "pyserial", "samsung"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Communications :: Telephony",
+    "Topic :: System :: Archiving :: Backup",
+]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.urls]
+Homepage = "https://github.com/varunjoshi/keypad-phone-backup"
+Issues = "https://github.com/varunjoshi/keypad-phone-backup/issues"
+
+[project.scripts]
+keypad-backup = "keypad_backup.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

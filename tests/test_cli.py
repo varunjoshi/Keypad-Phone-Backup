@@ -56,3 +56,43 @@ def test_version_flag(capsys):
     with pytest.raises(SystemExit):
         build_parser().parse_args(["--version"])
     assert __version__ in capsys.readouterr().out
+
+
+def test_parser_backup_subcommand():
+    args = build_parser().parse_args(["backup"])
+    assert args.command == "backup"
+    assert args.out == "phone_backup"
+    assert args.baud == 115200
+
+
+def test_parser_backup_with_flags():
+    args = build_parser().parse_args(["backup", "-p", "COM7", "-o", "my_backup", "--baud", "9600", "--full-log"])
+    assert args.command == "backup"
+    assert args.port == "COM7"
+    assert args.out == "my_backup"
+    assert args.baud == 9600
+    assert args.full_log is True
+
+
+def test_parser_list_ports_subcommands():
+    args1 = build_parser().parse_args(["list-ports"])
+    assert args1.command == "list-ports"
+
+    args2 = build_parser().parse_args(["ports"])
+    assert args2.command == "ports"
+
+
+def test_main_list_ports_subcommand(monkeypatch, capsys):
+    from keypad_backup import cli
+    monkeypatch.setattr(cli.list_ports, "comports", lambda: [P("COM1", "Test Port")])
+    assert cli.main(["list-ports"]) == 0
+    out = capsys.readouterr().out
+    assert "COM1\tTest Port" in out
+
+
+def test_main_ports_subcommand(monkeypatch, capsys):
+    from keypad_backup import cli
+    monkeypatch.setattr(cli.list_ports, "comports", lambda: [P("COM2", "Test Port 2")])
+    assert cli.main(["ports"]) == 0
+    out = capsys.readouterr().out
+    assert "COM2\tTest Port 2" in out

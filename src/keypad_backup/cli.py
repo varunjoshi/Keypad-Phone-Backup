@@ -1,4 +1,4 @@
-"""Command-line interface: `keypad-backup` or `python -m keypad_backup`."""
+"""Command-line interface: `keypad`, `keypad backup`, `keypad-backup`, or `python -m keypad_backup`."""
 import argparse
 import sys
 from pathlib import Path
@@ -46,18 +46,35 @@ def choose_ports(port_arg, ports=None, ask=input, say=print):
         raise SystemExit("That is not one of the listed numbers.")
 
 
-def build_parser():
+def build_parser(prog="keypad"):
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("-p", "--port", help="serial port, e.g. COM6 or /dev/ttyACM0 (default: find it automatically)")
+    common.add_argument("-o", "--out", default="phone_backup", help="output folder (default: phone_backup)")
+    common.add_argument("--baud", type=int, default=115200, help="serial speed (default: 115200)")
+    common.add_argument("--full-log", action="store_true",
+                        help="keep names, numbers and message text in raw_log.txt (hidden by default)")
+    common.add_argument("--list-ports", action="store_true", help="list serial ports and exit")
+
     p = argparse.ArgumentParser(
-        prog="keypad-backup",
+        prog=prog,
+        parents=[common],
         description="Back up contacts and SMS from an old keypad phone over USB (AT commands).",
     )
-    p.add_argument("-p", "--port", help="serial port, e.g. COM6 or /dev/ttyACM0 (default: find it automatically)")
-    p.add_argument("-o", "--out", default="phone_backup", help="output folder (default: phone_backup)")
-    p.add_argument("--baud", type=int, default=115200, help="serial speed (default: 115200)")
-    p.add_argument("--full-log", action="store_true",
-                   help="keep names, numbers and message text in raw_log.txt (hidden by default)")
-    p.add_argument("--list-ports", action="store_true", help="list serial ports and exit")
     p.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
+
+    subparsers = p.add_subparsers(dest="command", metavar="COMMAND")
+    subparsers.add_parser(
+        "backup",
+        parents=[common],
+        help="Back up contacts and SMS from an old keypad phone",
+        description="Back up contacts and SMS from an old keypad phone over USB (AT commands).",
+    )
+    subparsers.add_parser(
+        "list-ports",
+        aliases=["ports"],
+        help="List available serial ports and exit",
+        description="List available serial ports.",
+    )
     return p
 
 
@@ -67,7 +84,7 @@ def _size(result):
 
 def main(argv=None):
     args = build_parser().parse_args(argv)
-    if args.list_ports:
+    if args.list_ports or args.command in ("list-ports", "ports"):
         for p in list_ports.comports():
             print(f"{p.device}\t{p.description}")
         return 0

@@ -38,8 +38,9 @@ pip install .
 5. Run:
 
 ```bash
-keypad-backup
+keypad backup
 ```
+*(You can also use `keypad` or `keypad-backup`)*
 
 It finds the phone port by itself, reads contacts and messages (this can take a few minutes) and
 writes a `phone\_backup/` folder:
@@ -58,7 +59,7 @@ writes a `phone\_backup/` folder:
 |`-p`, `--port COM6`|Use this port instead of detecting it (`/dev/ttyACM0` on Linux)|
 |`-o`, `--out DIR`|Output folder (default `phone\_backup`)|
 |`--baud N`|Serial speed (default 115200)|
-|`--list-ports`|Show serial ports and exit|
+|`--list-ports`|Show serial ports and exit (or run `keypad list-ports`)|
 |`--full-log`|Keep names, numbers and message text in `raw\_log.txt`. **Never share that file.**|
 
 If the same person appears twice (phone and SIM), Google Contacts has a "Merge \& fix" tool.

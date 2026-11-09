@@ -27,6 +27,7 @@ Homepage = "https://github.com/varunjoshi/keypad-phone-backup"
 Issues = "https://github.com/varunjoshi/keypad-phone-backup/issues"
 
 [project.scripts]
+keypad = "keypad_backup.cli:main"
 keypad-backup = "keypad_backup.cli:main"
 
 [tool.setuptools.packages.find]
@@ -34,3 +35,4 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["src"]
